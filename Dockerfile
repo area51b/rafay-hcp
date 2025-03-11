@@ -1,29 +1,14 @@
-# Use a lightweight base image
-FROM alpine:latest
+FROM debian:latest
 
 # Install required dependencies
-RUN apk add --no-cache curl tar bash jq
+RUN apt-get update && apt-get install -y curl tar bash jq && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /app
+WORKDIR /tmp
 
-# Download and extract the OpenShift CLI (oc)
-ARG OC_CLI_URL
-RUN curl -L ${OC_CLI_URL} -o oc.tar && \
-    tar -xvf oc.tar && \
-    chmod +x oc && \
-    mv oc /usr/local/bin/
+# Copy startup script
+COPY hcp-init.sh /usr/local/bin/hcp-init.sh
+RUN chmod +x /usr/local/bin/hcp-init.sh
 
-# Download and extract the HCP CLI
-ARG HCP_URL
-RUN curl -L ${HCP_URL} -o hcp.tar.gz && \
-    tar -xvf hcp.tar.gz && \
-    chmod +x hcp && \
-    mv hcp /usr/local/bin/
-
-# Copy the entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-# Define entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# Set entrypoint
+ENTRYPOINT ["/usr/local/bin/hcp-init.sh"]
