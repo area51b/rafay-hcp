@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hcp-config
+data:
+  hcp-url: "{{ .Values.hcpUrl }}"
+  oc-cli-url: "{{ .Values.ocCliUrl }}"

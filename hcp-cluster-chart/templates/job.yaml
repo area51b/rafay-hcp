@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hcp-cluster-job
+spec:
+  backoffLimit: 0  # Prevents retries on failure
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: hcp-container
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        env:
+        - name: HCP_URL
+          valueFrom:
+            configMapKeyRef:
+              name: hcp-config
+              key: hcp-url
+        - name: OC_CLI_URL
+          valueFrom:
+            configMapKeyRef:
+              name: hcp-config
+              key: oc-cli-url
+        - name: RELEASE_IMAGE
+          value: "{{ .Values.releaseImage }}"
+        - name: CLUSTER_NAME
+          value: "{{ .Values.clusterName }}"
+        - name: OC_LOGIN_URL
+          valueFrom:
+            secretKeyRef:
+              name: oc-login-secret
+              key: server
+        - name: OC_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: oc-login-secret
+              key: username
+        - name: OC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: oc-login-secret
+              key: password
+        volumeMounts:
+        - name: pull-secret-volume
+          mountPath: "/pull-secret.json"
+          subPath: "pullSecret"
+      volumes:
+      - name: pull-secret-volume
+        secret:
+          secretName: "pull-secret"

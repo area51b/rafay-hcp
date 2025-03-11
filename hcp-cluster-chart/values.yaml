@@ -1,0 +1,21 @@
+hcpUrl: "https://hcp-cli-download-multicluster-engine.apps.company.com/linux/amd64/hcp.tar.gz"
+clusterName: "ihl-group3-demo"
+image:
+  repository: your-docker-image
+  tag: latest
+  pullPolicy: IfNotPresent
+
+ocCliUrl: "https://downloads-openshift-console.apps.company.com/amd64/linux/oc.tar"
+ocLogin:
+  server: "https://api.company.com:6443"
+  username: "admin"
+  password: "securepassword"
+
+releaseImage: "quay.io/openshift-release-dev/ocp-release:4.14.44-x86_64"
+nodePoolReplicas: "2"
+memory: "6Gi"
+cores: "2"
+etcdStorageClass: "isilon"
+
+pullSecretName: pull-secret
+pullSecretData: ""
