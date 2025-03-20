@@ -12,7 +12,11 @@ check_cluster_status() {
     echo "Checking HostedCluster status for '$CLUSTER_NAME'..."
     
     for ((i=0; i<TIMEOUT_MINUTES; i++)); do
+        echo "Running: oc get --namespace $NAMESPACE hostedclusters $CLUSTER_NAME -o json"
         STATUS_JSON=$(oc get --namespace $NAMESPACE hostedclusters $CLUSTER_NAME -o json 2>/dev/null || echo "{}")
+        # Print the output to debug
+        echo "STATUS_JSON: $STATUS_JSON"
+
         STATUS_TYPE=$(echo "$STATUS_JSON" | jq -r '.status.conditions[] | select(.type=="Available") | .status' 2>/dev/null)
         echo "Status: $STATUS_TYPE"
 
