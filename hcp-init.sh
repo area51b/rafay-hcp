@@ -35,8 +35,8 @@ hcp create cluster kubevirt \
   --etcd-storage-class "$ETCD_STORAGE_CLASS"
 
 # Wait and verify cluster creation
-echo "⏳ Waiting for cluster to be ready..."
+echo "Waiting for cluster to be ready..."
 /usr/local/bin/hcp-cluster-check.sh "$CLUSTER_NAME"
 
-echo "✅ HCP cluster creation completed successfully!"
+echo "HCP cluster creation completed successfully!"
 exit 0

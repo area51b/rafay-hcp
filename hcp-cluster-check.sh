@@ -17,47 +17,47 @@ check_cluster_status() {
         echo "Status: $STATUS_TYPE"
 
         if [[ "$STATUS_TYPE" == "True" ]]; then
-            echo "✅ Cluster '$CLUSTER_NAME' is available."
+            echo "Cluster '$CLUSTER_NAME' is available."
             return 0
         fi
 
-        echo "⏳ Cluster is not available yet. Retrying in $INTERVAL_SECONDS seconds..."
+        echo "Cluster is not available yet. Retrying in $INTERVAL_SECONDS seconds..."
         sleep $INTERVAL_SECONDS
     done
 
-    echo "❌ Timeout reached! Cluster '$CLUSTER_NAME' is not available after $TIMEOUT_MINUTES minutes."
+    echo "Timeout reached! Cluster '$CLUSTER_NAME' is not available after $TIMEOUT_MINUTES minutes."
     exit 1
 }
 
 # Function to download kubeconfig
 download_kubeconfig() {
-    echo "📥 Downloading kubeconfig..."
+    echo "Downloading kubeconfig..."
     if hcp create kubeconfig --name "$CLUSTER_NAME" > kubeconfig; then
-        echo "✅ Kubeconfig downloaded successfully."
+        echo "Kubeconfig downloaded successfully."
     else
-        echo "❌ Failed to download kubeconfig!"
+        echo "Failed to download kubeconfig!"
         exit 1
     fi
 }
 
 # Function to check node readiness
 check_node_status() {
-    echo "🔍 Checking node readiness..."
+    echo "Checking node readiness..."
 
     for ((i=0; i<TIMEOUT_MINUTES; i++)); do
         NODES_JSON=$(oc get node --kubeconfig=kubeconfig -o json 2>/dev/null || echo "{}")
         NOT_READY_NODES=$(echo "$NODES_JSON" | jq '[.items[] | select(.status.conditions[] | select(.type=="Ready" and .status!="True"))] | length')
 
         if [[ "$NOT_READY_NODES" == "0" ]]; then
-            echo "✅ All nodes are in Ready state."
+            echo "All nodes are in Ready state."
             return 0
         fi
 
-        echo "⏳ Some nodes are not Ready yet. Retrying in $INTERVAL_SECONDS seconds..."
+        echo "Some nodes are not Ready yet. Retrying in $INTERVAL_SECONDS seconds..."
         sleep $INTERVAL_SECONDS
     done
 
-    echo "❌ Timeout reached! Some nodes are still not Ready after $TIMEOUT_MINUTES minutes."
+    echo "Timeout reached! Some nodes are still not Ready after $TIMEOUT_MINUTES minutes."
     exit 1
 }
 
@@ -66,5 +66,5 @@ check_cluster_status
 download_kubeconfig
 check_node_status
 
-echo "🎉 Cluster '$CLUSTER_NAME' is fully available with all nodes Ready!"
+echo "Cluster '$CLUSTER_NAME' is fully available with all nodes Ready!"
 exit 0
